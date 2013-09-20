@@ -1,0 +1,390 @@
+# -*- python -*-
+
+## stdlib imports
+import os
+import os.path as osp
+import sys
+
+## waf imports
+import waflib.Logs as msg
+import waflib.Utils
+import waflib.Configure
+import waflib.Build
+import waflib.Task
+import waflib.Tools.ccroot
+from waflib.Configure import conf
+from waflib.TaskGen import feature, before_method, after_method, extension, after
+
+PACKAGE = {
+    'name': 'LCG_Settings',
+    'author': ['atlas collaboration'],
+}
+
+def pkg_deps(ctx):
+    return
+
+### ---------------------------------------------------------------------------
+def configure(ctx):
+    
+    msg.debug ('[configure] package name: '+PACKAGE['name'])
+
+    ### export
+    ctx.hwaf_export_module("waftools/lcg-policy.py")
+    
+    ctx.hwaf_declare_macro("LCG_releases", (
+      {"default": "${LCG_Settings_root}/../../.."},
+      {("ATLAS", "NIGHTLIES"): "/afs/cern.ch/sw/lcg/app/nightlies/${LCG_NGT_SLT_NAME}/${LCG_NGT_DAY_NAME}"},
+      {"ATLAS": "${SITEROOT}/sw/lcg/app/releases"},
+    ))
+
+    ctx.hwaf_declare_macro("LCG_external", (
+      {"default": "${LCG_Settings_root}/../../../../../external"},
+      {"ATLAS": "${SITEROOT}/sw/lcg/external"},
+    ))
+    ##### **** statement *hlib.PatternStmt (&{use_optional macro use_pkg  <package>_use_<pkg> <pkg> v* LCG_Interfaces -no_auto_imports USE_ALL_OPT_PKGS <pkg> v* LCG_Interfaces -no_auto_imports use $(use_pkg)})
+    ##### **** statement *hlib.PatternStmt (&{composite_package private ; macro <package>_sub_packages <parts> ; macro <package>_is_composite 1 ; end_private})
+    ##### **** statement *hlib.PatternStmt (&{declare_installed_libraries private macro list_cmd $(LCG_Settings_root)/scripts/list_files.sh $(<package>_types) <dir> <extras> ; macro <package>_types --type $(shlibsuffix) --type rootmap ; macro_append <package>_types  target-darwin --type dylib ; macro <package>_libraries `$(list_cmd)` target-win  ignore_installarea  end_private})
+    ##### **** statement *hlib.PatternStmt (&{symlink_extern private ; action <package>_symlink_extern_<type> python $(LCG_Settings_root)/python/lcg_InstallArea.py -p <package> -r $(<package>_root) -H <dir> -t <type> ; macro_append all_dependencies  <project>_with_installarea&target-unix <package>_symlink_extern_<type> ; end_private})
+
+    ctx.hwaf_declare_macro("unixdirname", (
+      {"default": "lib"},
+      {("target-unix", "target-x86_64"): "lib64"},
+    ))
+    ##### **** statement *hlib.PatternStmt (&{set_bin_and_lib_path apply_pattern clean_path ; apply_pattern set_lib_path ; apply_pattern set_bin_path})
+    ##### **** statement *hlib.PatternStmt (&{set_ext_bin_and_lib_path apply_pattern clean_path ; apply_pattern set_ext_lib_path windir=<windir> unixdir=<unixdir> ; apply_pattern set_bin_path})
+    ##### **** statement *hlib.PatternStmt (&{set_real_lib_path private ; apply_tag ignore_installarea ; apply_pattern set_ext_lib_path windir=lib unixdir=lib ; end_private})
+    ##### **** statement *hlib.PatternStmt (&{set_lib_path apply_pattern set_ext_lib_path windir=lib unixdir=lib ;})
+    ##### **** statement *hlib.PatternStmt (&{clean_path path_remove LD_LIBRARY_PATH /<package>/ target-win  path_remove LD_LIBRARY_PATH /$(<package>_name)/ target-win  path_remove DYLD_LIBRARY_PATH  target-win  target-darwin /<package>/ path_remove DYLD_LIBRARY_PATH  target-win  target-darwin /$(<package>_name)/ path_remove PATH /<package>/ path_remove PATH  target-win \<package>" path_remove PATH /$(<package>_name)/ path_remove PATH  target-win \$(<package>_name)" ;})
+    ##### **** statement *hlib.PatternStmt (&{set_ext_lib_path apply_pattern symlink_extern dir=$(<package>_home) type=lib apply_pattern clean_path path_prepend LD_LIBRARY_PATH $(<package>_home)/<unixdir> target-win  <project>_without_installarea&target-unix $(<package>_home)/<unixdir> ignore_installarea&target-unix $(<package>_home)/<unixdir> <project>_with_installarea&target-unix  path_prepend PATH  target-win $(<package>_home)\<windir> path_prepend DYLD_LIBRARY_PATH  <project>_without_installarea&target-darwin $(<package>_home)/<unixdir> ignore_installarea&target-unix $(<package>_home)/<unixdir> <project>_with_installarea&target-darwin  target-darwin $(<package>_home)/<unixdir>})
+    ##### **** statement *hlib.PatternStmt (&{set_bin_path apply_pattern symlink_extern dir=$(<package>_home) type=exe path_prepend PATH $(<package>_home)/bin <project>_without_installarea&target-unix $(<package>_home)/bin <project>_without_installarea&target-darwin $(<package>_home)/bin target-win $(<package>_home)/bin <project>_with_installarea&target-unix $(<package>_home)/bin <project>_with_installarea&target-darwin $(<package>_home)/bin ;})
+    ##### **** statement *hlib.PatternStmt (&{set_man_path apply_pattern set_ext_man_path mandir=man ;})
+    ##### **** statement *hlib.PatternStmt (&{set_ext_man_path path_remove MANPATH /<package>/ target-win  ; path_prepend MANPATH $(<package>_home)/<mandir> <project>_without_installarea&target-unix $(<package>_home)/<mandir> <project>_without_installarea&target-darwin $(<package>_home)/<mandir> target-win  <project>_with_installarea&target-unix $(<package>_home)/<mandir> <project>_with_installarea&target-darwin $(<package>_home)/<mandir> ;})
+
+    # ==== Compiler Names and environment setup ====
+
+    # gcc
+    ctx.hwaf_declare_macro("gcc_config_version", (
+      {"default": ""},
+      {"target-gcc43": "4.3.5"},
+      {"target-gcc44": "4.4.3"},
+      {"target-gcc45": "4.5.3"},
+      {"target-gcc46": "4.6.2"},
+      {"target-gcc47": "4.7.1"},
+      {"target-gccmax": "max"},
+      {"target-g11max": "g11"},
+      {"target-icc11": "4.3.5"},
+      {"target-clang": "4.6.2"},
+    ))
+
+    ctx.hwaf_declare_macro("gcc_native_version", (
+      {"default": "${gcc_config_version}"},
+    ))
+
+    ctx.hwaf_declare_macro("gcc_home", (
+      {"default": "${LCG_external}/gcc/${gcc_native_version}/${LCG_hostos}"},
+    ))
+
+    # clang
+    ctx.hwaf_declare_macro("clang_config_version", (
+      {"default": ""},
+      {"target-clang30": "3.0"},
+      {"target-clang31": "3.1"},
+    ))
+
+    ctx.hwaf_declare_macro("clang_native_version", (
+      {"default": "${clang_config_version}"},
+    ))
+
+    ctx.hwaf_declare_macro("clang_home", (
+      {"default": "${LCG_external}/llvm/${clang_native_version}/${LCG_hostos}"},
+    ))
+
+    # icc
+    ctx.hwaf_declare_macro("icc_config_version", (
+      {"default": ""},
+      {"target-icc11": "11.1"},
+    ))
+
+    ctx.hwaf_declare_macro("icc_native_version", (
+      {"default": "${icc_config_version}"},
+    ))
+
+    ctx.hwaf_declare_macro("intelplat", (
+      {"default": ""},
+      {("target-icc", "target-i686"): "ia32"},
+      {("target-icc", "target-x86_64"): "intel64"},
+    ))
+    ctx.hwaf_declare_runtime_env("intelplat")
+
+    ctx.hwaf_declare_macro("intel_home", (
+      {"default": ""},
+      {"target-icc": "/afs/cern.ch/sw/IntelSoftware/linux"},
+    ))
+    ctx.hwaf_declare_runtime_env("intel_home")
+    
+    ctx.hwaf_declare_macro("icc_home", (
+      {"default": ""},
+      {"target-icc": "${intel_home}/x86_64/Compiler/${icc_native_version}"},
+    ))
+    ctx.hwaf_declare_runtime_env("icc_home")
+    
+    ctx.hwaf_declare_macro("icc_c_home", (
+      {"default": ""},
+      {"target-icc": "${icc_home}/072"},
+    ))
+    ctx.hwaf_declare_runtime_env("icc_c_home")
+    
+    ctx.hwaf_declare_macro("icc_f_home", (
+      {"default": ""},
+      {"target-icc": "${icc_home}/072"},
+    ))
+    ctx.hwaf_declare_runtime_env("icc_f_home")
+
+    # LINKER
+    ctx.hwaf_macro_append("LDFLAGS", (
+      {"default":""},
+      {("host-x86_64", "target-i686"): "-m32"}
+    ))
+    ctx.hwaf_declare_runtime_env("LDFLAGS")
+
+    # C Preprocessor
+    ctx.hwaf_macro_append("CPPFLAGS", (
+      {"default":""},
+      {("host-x86_64", "target-i686"): "-m32"}
+    ))
+    ctx.hwaf_declare_runtime_env("CPPFLAGS")
+    
+    # C Settings
+    
+    ctx.hwaf_declare_macro("CC", (
+      {"default": "gcc"},
+      {("CERNDISTCC", "target-slc", "target-gcc"): "lcg-gcc-${gcc_config_version}"},
+      {("host-slc5", "target-gcc34"): "gcc34"},
+      {"target-darwin": "cc"},
+      {"target-win": "cl"},
+      {"target-clang": "clang"},
+      {"target-icc": "icc"},
+    ), override=True,
+    )
+    ctx.hwaf_declare_runtime_env("CC")
+
+    ctx.hwaf_macro_append("CFLAGS", (
+      {"default":""},
+      {("host-x86_64", "target-i686"): "-m32"}
+    ))
+    ctx.hwaf_declare_runtime_env("CFLAGS")
+
+    ctx.hwaf_macro_append("CFLAGS", (
+      {"default":""},
+      {("target-c11"): "-std=c1x"}
+    ))
+    #ctx.hwaf_declare_runtime_env("CFLAGS")
+
+    # C++ Settings
+    
+    ctx.hwaf_declare_macro("CXX", (
+      {"default": "g++"},
+      {("CERNDISTCC", "target-slc", "target-gcc"): "lcg-g++-${gcc_config_version}"},
+      {("host-slc5", "target-gcc34"): "g++34"},
+      {"target-darwin": "c++"},
+      {"target-win": "cl"},
+      {"target-clang": "clang++"},
+      {"target-icc": "icpc"},
+    ), override=True,
+    )
+    
+    ctx.hwaf_declare_runtime_env("CXX")
+
+    ctx.hwaf_macro_append("CXXFLAGS", (
+      {"default":""},
+      {("host-x86_64", "target-i686"): "-m32"}
+    ))
+    ctx.hwaf_declare_runtime_env("CXXFLAGS")
+
+    ctx.hwaf_macro_append("CXXFLAGS", (
+      {"default":""},
+      {"target-c11": "-std=c++0x"},
+    ))
+
+    ctx.hwaf_declare_macro("LINK_CXX", (
+      {"default": "${CXX}"},
+      {"target-win": "link.exe"},
+    ), override=True,
+    )
+
+    # Fortran settings
+    ctx.hwaf_declare_macro("FC", (
+      {"default": "g77"},
+      {("CERNDISTCC", "target-slc", "target-gcc"): "lcg-gfortran-${gcc_config_version}"},
+      {"target-gcc4": "gfortran"},
+      {"target-win": "f77.exe"},
+      {"target-clang": "gfortran"},
+      {"target-icc": "ifort"},
+    ), override=True,
+    )
+    ctx.hwaf_declare_runtime_env("FC")
+
+    ctx.hwaf_macro_append("FCFLAGS", (
+      {"default":""},
+      {("host-x86_64", "target-i686"): "-m32"}
+    ))
+    ctx.hwaf_declare_runtime_env("FCFLAGS")
+
+    # Distcc Settings
+    ctx.hwaf_declare_tag(
+        "CERNDISTCC",
+        content=["CERN", "use-distcc"]
+    )
+
+    ctx.hwaf_macro_prepend("CPP", (
+      {"default": ""},
+      {"use-distcc": "distcc"},
+    ))
+
+    ctx.hwaf_macro_prepend("CC", (
+      {"default": ""},
+      {"use-distcc": "distcc"},
+    ))
+
+    ctx.hwaf_macro_prepend("FC", (
+      {"default": ""},
+      {"use-distcc": "distcc"},
+    ))
+
+    # Ccache Settings
+    ctx.hwaf_declare_macro("CCACHE_PREFIX", (
+      {"default": ""},
+      {("use-ccache", "use-distcc"): "distcc"},
+    ))
+    ctx.hwaf_declare_runtime_env("CCACHE_PREFIX")
+
+    ctx.hwaf_macro_remove("CPP", (
+      {"default": ""},
+      {("use-ccache", "use-distcc"): "distcc"},
+    ))
+
+    ctx.hwaf_macro_prepend("CPP", (
+      {"default": ""},
+      {"use-ccache": "ccache"},
+    ))
+
+    ctx.hwaf_macro_remove("CC", (
+      {"default": ""},
+      {("use-ccache", "use-distcc"): "distcc"},
+    ))
+
+    ctx.hwaf_macro_prepend("CC", (
+      {"default": ""},
+      {"use-ccache": "ccache"},
+    ))
+
+    ctx.hwaf_macro_remove("FC", (
+      {"default": ""},
+      {("use-ccache", "use-distcc"): "distcc"},
+    ))
+
+    ctx.hwaf_macro_prepend("FC", (
+      {"default": ""},
+      {"use-ccache": "ccache"},
+    ))
+
+    # Environment for special compilers
+    ctx.hwaf_path_remove("PATH", (
+      {"default": ""},
+      {"target-lcg-compiler": "${LCG_external}/gcc/"},
+      {"target-icc": "${LCG_external}/gcc/"},
+      {"target-clang": "${LCG_external}/gcc/"},
+    ))
+
+    ctx.hwaf_path_remove("PATH", (
+      {"default": ""},
+      {"target-clang": "${LCG_external}/llvm/"},
+    ))
+
+    ctx.hwaf_path_prepend("PATH", (
+      {"default": ""},
+      {"target-lcg-compiler": "${gcc_home}/bin"},
+      {"target-clang": "${gcc_home}/bin"},
+      {"target-icc": "${gcc_home}/bin"},
+    ))
+
+    ctx.hwaf_path_prepend("PATH", (
+      {"default": ""},
+      {"target-clang": "${clang_home}/bin"},
+    ))
+
+    ctx.hwaf_declare_macro("LCG_COMPILER_ROOT", (
+        {"default": ""},
+        {"target-lcg-compiler": "${gcc_home}"},
+        {"target-clang":        "${clang_home}"},
+        {"target-icc":          "${icc_home}"},
+        ))
+    
+    ctx.hwaf_declare_macro("COMPILER_PATH", (
+      {"default": "${gcc_home}/lib/gcc/x86_64-unknown-linux-gnu/${gcc_native_version}"},
+    ))
+    ctx.hwaf_declare_runtime_env("COMPILER_PATH")
+
+    ctx.hwaf_path_remove("LD_LIBRARY_PATH", (
+      {"default": ""},
+      {"target-lcg-compiler": "${LCG_external}/gcc/"},
+      {"target-icc": "${LCG_external}/gcc/"},
+      {"target-clang": "${LCG_external}/gcc/"},
+    ))
+
+    ctx.hwaf_path_remove("LD_LIBRARY_PATH", (
+      {"default": ""},
+      {"target-clang": "${LCG_external}/llvm/"},
+    ))
+
+    ctx.hwaf_path_prepend("LD_LIBRARY_PATH", (
+      {"default": ""},
+      {("target-lcg-compiler", "host-x86_64", "target-i686"): "${gcc_home}/lib64"},
+      {("target-icc", "host-x86_64", "target-i686"): "${gcc_home}/lib64"},
+      {"target-clang": "${clang_home}/lib"},
+    ))
+
+    ctx.hwaf_path_prepend("LD_LIBRARY_PATH", (
+      {"default": ""},
+      {"target-lcg-compiler": "${gcc_home}/${unixdirname}"},
+      {"target-clang": "${gcc_home}/${unixdirname}"},
+      {"target-icc": "${gcc_home}/${unixdirname}"},
+    ))
+
+    #code coverage - lcov tool
+    ctx.hwaf_declare_macro("use_lcov", (
+      {"default": ""},
+      {"target-cov": ["lcov", "v*", "LCG_Interfaces"]},
+    ))
+
+    #profiling - igprof tool
+    ctx.hwaf_declare_macro("use_igprof", (
+      {"default": ""},
+      {"target-pro": ["igprof", "v*", "LCG_Interfaces"]},
+    ))
+
+    #temporal ATLAS hack
+    ctx.hwaf_macro_append("CPPFLAGS", (
+      {"default": ""},
+      {("ATLAS", "target-slc", "target-gcc45"): ["-include", "cstdio", "-include", "stdint.h"]},
+      {("ATLAS", "target-slc", "target-gcc46"): ["-include", "stddef.h", "-include", "cstdio", "-include", "stdint.h"]},
+    ))
+
+    ### load-up toolchain
+    msg.debug("lcg: loading toolchain...")
+    msg.debug("lcg: path=%s" % (ctx.env["LCG_COMPILER_ROOT"]))
+    ctx.load('find_compiler')
+    path = ctx.env['LCG_COMPILER_ROOT']
+    ctx.find_toolchain(override=True, path=path, mandatory=True)
+    ctx.msg("LCG C compiler", ctx.env['CC'])
+    ctx.msg("LCG CXX compiler", ctx.env['CXX'])
+    ctx.msg("LCG Fortran compiler", ctx.env['FC'])
+    
+    return # configure
+
+
+### ---------------------------------------------------------------------------
+def build(ctx):
+    return # build
+
+## EOF ##

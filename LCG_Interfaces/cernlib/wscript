@@ -1,0 +1,87 @@
+## -*- python -*-
+
+## waf imports
+import waflib.Logs as msg
+
+PACKAGE = {
+    "name":    "LCG_Interfaces/cernlib",
+    "authors": ["ATLAS Collaboration"],
+}
+
+### ---------------------------------------------------------------------------
+def pkg_deps(ctx):
+    
+    ## public dependencies
+    ctx.use_pkg("LCG_Configuration", version="v*", public=True)
+    ctx.use_pkg("LCG_Settings", version="v*", public=True)
+    ctx.use_pkg("LCG_Interfaces/blas", version="v*", public=True)
+    ctx.use_pkg("LCG_Interfaces/lapack", version="v*", public=True)
+    return # pkg_deps
+
+
+### ---------------------------------------------------------------------------
+def options(ctx):
+    
+    return # options
+
+
+### ---------------------------------------------------------------------------
+def configure(ctx):
+    
+    macro = ctx.hwaf_declare_macro
+    
+    macro("cernlib_native_version", "${cernlib_config_version}")
+
+    macro("cernlib_base", "${LCG_external}/cernlib/${cernlib_native_version}")
+    macro("cernlib_home", "${cernlib_base}/${LCG_system}")
+
+    macro("cernlib_bindir", "${cernlib_home}/bin")
+    macro("cernlib_incdir", "${cernlib_home}/include")
+    macro("cernlib_libdir", "${cernlib_home}/lib")
+    macro("cernlib_mandir", "${cernlib_home}/src/man")
+    
+    macro("LIBPATH_graflib", (
+      {"default": ["${cernlib_libdir}", "/usr/X11R6/lib"]},
+    ))
+
+    macro("LIB_graflib", (
+      {"default": ["graflib", "grafX11", "packlib", "X11"]},
+    ))
+    
+    macro("LIB_cernlib", (
+      {"default": ["mathlib", "packlib_noshift", "nsl", "crypt", "dl"]},
+      {"target-win": ["dfordll", "ix_higz", "mathmd", "packmd", "shiftmd"]},
+    ))
+    
+    ctx.hwaf_macro_append("LIB_cernlib", (
+      {"default": ""},
+      {("target-linux", "target-gcc3"): "g2c"},
+      {"target-linux": "gfortran"},
+    ))
+
+    macro("DEFINES_cernlib", (
+      {"default": "CERNLIB_TYPE"},
+      {"target-linux": ["CERNLIB_TYPE", "CERNLIB_LINUX"]},
+      {"target-win": "CERNLIB_TYPE"},
+    ))
+    
+    macro("cernlib_export_paths", (
+      {"default": ["${cernlib_incdir}", "${cernlib_bindir}", "${cernlib_libdir}"]},
+    ))
+
+    ctx.lcg_declare_external_package(
+        'cernlib',
+        path='${cernlib_home}',
+        binpath='${cernlib_bindir}',
+        incpath='${cernlib_incdir}',
+        libpath='${cernlib_libdir}',
+        manpath='${cernlib_mandir}',
+        )
+    return # configure
+
+
+### ---------------------------------------------------------------------------
+def build(ctx):
+    return # build
+
+## EOF ##
