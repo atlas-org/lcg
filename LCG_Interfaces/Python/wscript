@@ -16,45 +16,47 @@ def pkg_deps(ctx):
 def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
 
+    macro = ctx.hwaf_declare_macro
+    
     ctx.hwaf_declare_tag("target-mac", content=["python_framework"])
     
-    ctx.hwaf_declare_macro("Python_native_version", (
+    macro("Python_native_version", (
         {"default": "${Python_config_version}"},
         ))
 
-    ctx.hwaf_declare_macro("Python_version", (
+    macro("Python_version", (
         {"default": "${Python_config_version_twodigit}"},
         ))
     
-    ctx.hwaf_declare_macro("Python_libversion", (
+    macro("Python_libversion", (
         {"default": "${Python_config_version_twodigit}"},
         ## FIXME:
         #{"target-win": "${Python_libversion_cmd}"},
         ))
     
-    ctx.hwaf_declare_macro("Python_home", (
+    macro("Python_home", (
         {"default": "${LCG_external}/Python/${Python_native_version}/${LCG_system}"},
         {"python_framework": "${LCG_external}/Python/${Python_native_version}/${LCG_system}/Python.framework/Versions/Current"},
         ))
 
-    ctx.hwaf_declare_macro("Python_inc", (
+    macro("Python_inc", (
         {"default": "${Python_home}/include/python${Python_version}"},
         {"target-win": "${Python_home}/include"}
         ))
 
-    ctx.hwaf_declare_macro("Python_bindir", (
+    macro("Python_bindir", (
         {"default": "${Python_home}/bin"},
         {"target-win": "${Python_home}"}
         ))
 
-    ctx.hwaf_declare_macro('Python_linkopts', (
+    macro('Python_linkopts', (
         {'default': 'python${Python_libversion} util pthread'},
         {'target-darwin': 'python'},
-        {'target-win': '${Python_home}\libs\python${Python_libversion}.lib'}
+        {'target-win': 'python${Python_libversion}'}
         ))
 
     if ctx.is_darwin():
-        ctx.hwaf_declare_macro("PYTHONHOME", (
+        macro("PYTHONHOME", (
             {"default": ""},
             {"target-darwin": "${Python_home}"},
             ))
@@ -88,7 +90,7 @@ def configure(ctx):
         path_list=[binpath],
         extra_paths=[path],
         )
-
+    
     ctx.lcg_declare_external_package(
         'python',
         path='${Python_home}',
@@ -96,6 +98,7 @@ def configure(ctx):
         libname='${Python_linkopts}',
         incpath='${Python_inc}',
         )
+    
     return
 
 def build(ctx):
