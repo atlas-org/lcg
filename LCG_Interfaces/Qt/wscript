@@ -78,11 +78,6 @@ def configure(ctx):
 
 ### ---------------------------------------------------------------------------
 def build(ctx):
-    
-    
-    ##### **** statement *hlib.ApplyPatternStmt (&{set_bin_and_lib_path []})
-    
-    
     return # build
 
 ## EOF ##

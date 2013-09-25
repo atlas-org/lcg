@@ -25,26 +25,17 @@ def configure(ctx):
     ctx.load('find_xrootd')
     ctx.load('find_gccxml')
 
-    ctx.hwaf_declare_macro("ROOT_native_version", (
-        {"default": "${ROOT_config_version}"},
-        ))
+    macro = ctx.hwaf_declare_macro
+    
+    macro("ROOT_native_version", "${ROOT_config_version}")
+    macro("ROOT_base", "${LCG_releases}/ROOT/${ROOT_native_version}")
 
-    ctx.hwaf_declare_macro("ROOT_base", (
-        {"default": "${LCG_releases}/ROOT/${ROOT_native_version}"},
-        ))
+    macro("ROOT_home", "${ROOT_base}/${LCG_platform}/root")
 
-    ctx.hwaf_declare_macro("ROOT_home", (
-        {"default": "${ROOT_base}/${LCG_platform}/root"},
-        ))
-
-    ctx.hwaf_declare_macro("ROOTSYS", (
-        {"default": "${ROOT_home}"},
-        ))
+    macro("ROOTSYS", "${ROOT_home}")
     ctx.hwaf_declare_runtime_env("ROOTSYS")
     
-    ctx.hwaf_declare_macro("ROOT_HOME", (
-        {"default": "${ROOT_home}"},
-        ))
+    macro("ROOT_HOME", "${ROOT_home}")
     
     path = ctx.hwaf_subst_vars("${ROOTSYS}")
     binpath = ctx.hwaf_subst_vars("${ROOTSYS}/bin")

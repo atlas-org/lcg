@@ -1,5 +1,4 @@
 # -*- python -*-
-# automatically generated wscript
 
 import waflib.Logs as msg
 
@@ -15,25 +14,21 @@ def pkg_deps(ctx):
 
 def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
-    ctx.hwaf_declare_macro("GCCXML_native_version", (
-        {"default": "${GCCXML_config_version}"},
-        ))
 
-    ctx.hwaf_declare_macro("GCCXML_home", (
-        {"default": "${LCG_external}/gccxml/${GCCXML_native_version}/${LCG_system}"},
-        ))
+    macro = ctx.hwaf_declare_macro
+    
+    macro("GCCXML_native_version", "${GCCXML_config_version}")
 
-    ctx.hwaf_declare_macro("GCCXML_name", (
-        {"default": "gccxml"},
-        ))
+    macro("GCCXML_home", "${LCG_external}/gccxml/${GCCXML_native_version}/${LCG_system}")
 
-    ctx.hwaf_path_prepend('PATH', (
-        {"default": "${GCCXML_home}/bin"},
-        ))
+    macro("GCCXML_name", "gccxml")
+
+    ctx.hwaf_path_prepend('PATH', "${GCCXML_home}/bin")
     
     ctx.lcg_declare_external_package(
         "gccxml",
         path="${GCCXML_home}",
+        binpath='${GCCXML_home}/bin',
         )
 
     ctx.load('find_gccxml')
@@ -47,14 +42,4 @@ def configure(ctx):
     return
 
 def build(ctx):
-    # build artifacts
-    # e.g.:
-    # ctx.build_complib(
-    #    name = 'GCCXML',
-    #    source = 'src/*.cxx src/components/*.cxx',
-    #    use = ['lib1', 'lib2', 'ROOT', 'boost', ...],
-    # )
-    # ctx.install_headers()
-    # ctx.build_pymodule(source=['python/*.py'])
-    # ctx.install_joboptions(source=['share/*.py'])
     return
