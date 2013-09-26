@@ -28,42 +28,38 @@ def configure(ctx):
     
     msg.debug ('[configure] package name: '+PACKAGE['name'])
 
+    macro = ctx.hwaf_declare_macro
+    
     ### export
     ctx.hwaf_export_module("waftools/lcg-policy.py")
+
+    macro("SITEROOT", (
+        {"default": "/opt"},
+        {("afs", "cern"): "/afs/cern.ch"},
+        {("cvmfs", "cern"): "/cvmfs/cern.ch"},
+    ))
+    ctx.hwaf_declare_runtime_env("SITEROOT")
     
-    ctx.hwaf_declare_macro("LCG_releases", (
+    macro("LCG_releases", (
       {"default": "${LCG_Settings_root}/../../.."},
       {("ATLAS", "NIGHTLIES"): "/afs/cern.ch/sw/lcg/app/nightlies/${LCG_NGT_SLT_NAME}/${LCG_NGT_DAY_NAME}"},
       {"ATLAS": "${SITEROOT}/sw/lcg/app/releases"},
     ))
 
-    ctx.hwaf_declare_macro("LCG_external", (
+    macro("LCG_external", (
       {"default": "${LCG_Settings_root}/../../../../../external"},
       {"ATLAS": "${SITEROOT}/sw/lcg/external"},
     ))
-    ##### **** statement *hlib.PatternStmt (&{use_optional macro use_pkg  <package>_use_<pkg> <pkg> v* LCG_Interfaces -no_auto_imports USE_ALL_OPT_PKGS <pkg> v* LCG_Interfaces -no_auto_imports use $(use_pkg)})
-    ##### **** statement *hlib.PatternStmt (&{composite_package private ; macro <package>_sub_packages <parts> ; macro <package>_is_composite 1 ; end_private})
-    ##### **** statement *hlib.PatternStmt (&{declare_installed_libraries private macro list_cmd $(LCG_Settings_root)/scripts/list_files.sh $(<package>_types) <dir> <extras> ; macro <package>_types --type $(shlibsuffix) --type rootmap ; macro_append <package>_types  target-darwin --type dylib ; macro <package>_libraries `$(list_cmd)` target-win  ignore_installarea  end_private})
-    ##### **** statement *hlib.PatternStmt (&{symlink_extern private ; action <package>_symlink_extern_<type> python $(LCG_Settings_root)/python/lcg_InstallArea.py -p <package> -r $(<package>_root) -H <dir> -t <type> ; macro_append all_dependencies  <project>_with_installarea&target-unix <package>_symlink_extern_<type> ; end_private})
 
-    ctx.hwaf_declare_macro("unixdirname", (
+    macro("unixdirname", (
       {"default": "lib"},
       {("target-unix", "target-x86_64"): "lib64"},
     ))
-    ##### **** statement *hlib.PatternStmt (&{set_bin_and_lib_path apply_pattern clean_path ; apply_pattern set_lib_path ; apply_pattern set_bin_path})
-    ##### **** statement *hlib.PatternStmt (&{set_ext_bin_and_lib_path apply_pattern clean_path ; apply_pattern set_ext_lib_path windir=<windir> unixdir=<unixdir> ; apply_pattern set_bin_path})
-    ##### **** statement *hlib.PatternStmt (&{set_real_lib_path private ; apply_tag ignore_installarea ; apply_pattern set_ext_lib_path windir=lib unixdir=lib ; end_private})
-    ##### **** statement *hlib.PatternStmt (&{set_lib_path apply_pattern set_ext_lib_path windir=lib unixdir=lib ;})
-    ##### **** statement *hlib.PatternStmt (&{clean_path path_remove LD_LIBRARY_PATH /<package>/ target-win  path_remove LD_LIBRARY_PATH /$(<package>_name)/ target-win  path_remove DYLD_LIBRARY_PATH  target-win  target-darwin /<package>/ path_remove DYLD_LIBRARY_PATH  target-win  target-darwin /$(<package>_name)/ path_remove PATH /<package>/ path_remove PATH  target-win \<package>" path_remove PATH /$(<package>_name)/ path_remove PATH  target-win \$(<package>_name)" ;})
-    ##### **** statement *hlib.PatternStmt (&{set_ext_lib_path apply_pattern symlink_extern dir=$(<package>_home) type=lib apply_pattern clean_path path_prepend LD_LIBRARY_PATH $(<package>_home)/<unixdir> target-win  <project>_without_installarea&target-unix $(<package>_home)/<unixdir> ignore_installarea&target-unix $(<package>_home)/<unixdir> <project>_with_installarea&target-unix  path_prepend PATH  target-win $(<package>_home)\<windir> path_prepend DYLD_LIBRARY_PATH  <project>_without_installarea&target-darwin $(<package>_home)/<unixdir> ignore_installarea&target-unix $(<package>_home)/<unixdir> <project>_with_installarea&target-darwin  target-darwin $(<package>_home)/<unixdir>})
-    ##### **** statement *hlib.PatternStmt (&{set_bin_path apply_pattern symlink_extern dir=$(<package>_home) type=exe path_prepend PATH $(<package>_home)/bin <project>_without_installarea&target-unix $(<package>_home)/bin <project>_without_installarea&target-darwin $(<package>_home)/bin target-win $(<package>_home)/bin <project>_with_installarea&target-unix $(<package>_home)/bin <project>_with_installarea&target-darwin $(<package>_home)/bin ;})
-    ##### **** statement *hlib.PatternStmt (&{set_man_path apply_pattern set_ext_man_path mandir=man ;})
-    ##### **** statement *hlib.PatternStmt (&{set_ext_man_path path_remove MANPATH /<package>/ target-win  ; path_prepend MANPATH $(<package>_home)/<mandir> <project>_without_installarea&target-unix $(<package>_home)/<mandir> <project>_without_installarea&target-darwin $(<package>_home)/<mandir> target-win  <project>_with_installarea&target-unix $(<package>_home)/<mandir> <project>_with_installarea&target-darwin $(<package>_home)/<mandir> ;})
 
     # ==== Compiler Names and environment setup ====
 
     # gcc
-    ctx.hwaf_declare_macro("gcc_config_version", (
+    macro("gcc_config_version", (
       {"default": ""},
       {"target-gcc43": "4.3.5"},
       {"target-gcc44": "4.4.3"},
@@ -76,65 +72,65 @@ def configure(ctx):
       {"target-clang": "4.6.2"},
     ))
 
-    ctx.hwaf_declare_macro("gcc_native_version", (
+    macro("gcc_native_version", (
       {"default": "${gcc_config_version}"},
     ))
 
-    ctx.hwaf_declare_macro("gcc_home", (
+    macro("gcc_home", (
       {"default": "${LCG_external}/gcc/${gcc_native_version}/${LCG_hostos}"},
     ))
 
     # clang
-    ctx.hwaf_declare_macro("clang_config_version", (
+    macro("clang_config_version", (
       {"default": ""},
       {"target-clang30": "3.0"},
       {"target-clang31": "3.1"},
     ))
 
-    ctx.hwaf_declare_macro("clang_native_version", (
+    macro("clang_native_version", (
       {"default": "${clang_config_version}"},
     ))
 
-    ctx.hwaf_declare_macro("clang_home", (
+    macro("clang_home", (
       {"default": "${LCG_external}/llvm/${clang_native_version}/${LCG_hostos}"},
     ))
 
     # icc
-    ctx.hwaf_declare_macro("icc_config_version", (
+    macro("icc_config_version", (
       {"default": ""},
       {"target-icc11": "11.1"},
     ))
 
-    ctx.hwaf_declare_macro("icc_native_version", (
+    macro("icc_native_version", (
       {"default": "${icc_config_version}"},
     ))
 
-    ctx.hwaf_declare_macro("intelplat", (
+    macro("intelplat", (
       {"default": ""},
       {("target-icc", "target-i686"): "ia32"},
       {("target-icc", "target-x86_64"): "intel64"},
     ))
     ctx.hwaf_declare_runtime_env("intelplat")
 
-    ctx.hwaf_declare_macro("intel_home", (
+    macro("intel_home", (
       {"default": ""},
       {"target-icc": "/afs/cern.ch/sw/IntelSoftware/linux"},
     ))
     ctx.hwaf_declare_runtime_env("intel_home")
     
-    ctx.hwaf_declare_macro("icc_home", (
+    macro("icc_home", (
       {"default": ""},
       {"target-icc": "${intel_home}/x86_64/Compiler/${icc_native_version}"},
     ))
     ctx.hwaf_declare_runtime_env("icc_home")
     
-    ctx.hwaf_declare_macro("icc_c_home", (
+    macro("icc_c_home", (
       {"default": ""},
       {"target-icc": "${icc_home}/072"},
     ))
     ctx.hwaf_declare_runtime_env("icc_c_home")
     
-    ctx.hwaf_declare_macro("icc_f_home", (
+    macro("icc_f_home", (
       {"default": ""},
       {"target-icc": "${icc_home}/072"},
     ))
@@ -156,7 +152,7 @@ def configure(ctx):
     
     # C Settings
     
-    ctx.hwaf_declare_macro("CC", (
+    macro("CC", (
       {"default": "gcc"},
       {("CERNDISTCC", "target-slc", "target-gcc"): "lcg-gcc-${gcc_config_version}"},
       {("host-slc5", "target-gcc34"): "gcc34"},
@@ -182,7 +178,7 @@ def configure(ctx):
 
     # C++ Settings
     
-    ctx.hwaf_declare_macro("CXX", (
+    macro("CXX", (
       {"default": "g++"},
       {("CERNDISTCC", "target-slc", "target-gcc"): "lcg-g++-${gcc_config_version}"},
       {("host-slc5", "target-gcc34"): "g++34"},
@@ -206,14 +202,14 @@ def configure(ctx):
       {"target-c11": "-std=c++0x"},
     ))
 
-    ctx.hwaf_declare_macro("LINK_CXX", (
+    macro("LINK_CXX", (
       {"default": "${CXX}"},
       {"target-win": "link.exe"},
     ), override=True,
     )
 
     # Fortran settings
-    ctx.hwaf_declare_macro("FC", (
+    macro("FC", (
       {"default": "g77"},
       {("CERNDISTCC", "target-slc", "target-gcc"): "lcg-gfortran-${gcc_config_version}"},
       {"target-gcc4": "gfortran"},
@@ -252,7 +248,7 @@ def configure(ctx):
     ))
 
     # Ccache Settings
-    ctx.hwaf_declare_macro("CCACHE_PREFIX", (
+    macro("CCACHE_PREFIX", (
       {"default": ""},
       {("use-ccache", "use-distcc"): "distcc"},
     ))
@@ -313,14 +309,14 @@ def configure(ctx):
       {"target-clang": "${clang_home}/bin"},
     ))
 
-    ctx.hwaf_declare_macro("LCG_COMPILER_ROOT", (
+    macro("LCG_COMPILER_ROOT", (
         {"default": ""},
         {"target-lcg-compiler": "${gcc_home}"},
         {"target-clang":        "${clang_home}"},
         {"target-icc":          "${icc_home}"},
         ))
     
-    ctx.hwaf_declare_macro("COMPILER_PATH", (
+    macro("COMPILER_PATH", (
       {"default": "${gcc_home}/lib/gcc/x86_64-unknown-linux-gnu/${gcc_native_version}"},
     ))
     ctx.hwaf_declare_runtime_env("COMPILER_PATH")
@@ -352,13 +348,13 @@ def configure(ctx):
     ))
 
     #code coverage - lcov tool
-    ctx.hwaf_declare_macro("use_lcov", (
+    macro("use_lcov", (
       {"default": ""},
       {"target-cov": ["lcov", "v*", "LCG_Interfaces"]},
     ))
 
     #profiling - igprof tool
-    ctx.hwaf_declare_macro("use_igprof", (
+    macro("use_igprof", (
       {"default": ""},
       {"target-pro": ["igprof", "v*", "LCG_Interfaces"]},
     ))
