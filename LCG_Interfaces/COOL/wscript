@@ -45,6 +45,9 @@ def configure(ctx):
     macro("COOL_libdir", "${COOL_home}/lib")
     macro("COOL_pydir",  "${COOL_home}/python")
 
+    ctx.hwaf_declare_tag("NEEDS_COOL_FACTORY", content=[])
+    ctx.hwaf_declare_tag("NEEDS_PYCOOL",       content=[])
+    
     macro("LIB_COOL", (
         {"default": "lcg_CoolKernel"},
         {"NEEDS_COOL_FACTORY": ["lcg_CoolKernel", "lcg_CoolApplication"]},
