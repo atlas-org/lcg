@@ -360,7 +360,12 @@ def configure(ctx):
     ))
 
     #temporal ATLAS hack
-    ctx.hwaf_macro_append("CPPFLAGS", (
+    ctx.hwaf_macro_append("CFLAGS", (
+      {"default": ""},
+      {("ATLAS", "target-slc", "target-gcc45"): ["-include", "stdint.h"]},
+      {("ATLAS", "target-slc", "target-gcc46"): ["-include", "stddef.h", "-include", "stdint.h"]},
+    ))
+    ctx.hwaf_macro_append("CXXFLAGS", (
       {"default": ""},
       {("ATLAS", "target-slc", "target-gcc45"): ["-include", "cstdio", "-include", "stdint.h"]},
       {("ATLAS", "target-slc", "target-gcc46"): ["-include", "stddef.h", "-include", "cstdio", "-include", "stdint.h"]},
