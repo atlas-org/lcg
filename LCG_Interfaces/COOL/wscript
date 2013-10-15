@@ -41,7 +41,7 @@ def configure(ctx):
     macro("COOL_home", "${COOL_base}/${LCG_platform}")
 
     macro("COOL_bindir", "${COOL_home}/bin")
-    macro("COOL_incdir", "${COOL_home}/include")
+    macro("COOL_incdir", "${COOL_base}/include")
     macro("COOL_libdir", "${COOL_home}/lib")
     macro("COOL_pydir",  "${COOL_home}/python")
 
