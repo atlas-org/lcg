@@ -21,7 +21,7 @@ def configure(ctx):
     config_version = ctx.hwaf_subst_vars("${CLHEP_config_version}").split("-")[0]
     macro("CLHEP_native_version", config_version)
 
-    macro("CLHEP_home", "${LCG_external}/clhep/${CLHEP_native_version}/${LCG_system}")
+    macro("CLHEP_home", "${LCG_external}/clhep/${CLHEP_config_version}/${LCG_system}")
 
     macro("CLHEP_incdir", "${CLHEP_home}/include")
     macro("CLHEP_bindir", "${CLHEP_home}/bin")
