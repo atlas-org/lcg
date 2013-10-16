@@ -49,7 +49,7 @@ def configure(ctx):
     ))
     
     ctx.hwaf_macro_append('LIB_CORAL-Relational-Access', (
-        {"default": ["lcg_CoralBase", "${CORAL_relacc_libs}"]},
+        {"default": ["lcg_CoralKernel", "lcg_RelationalAccess"]},
     ))
     
     ctx.hwaf_path_prepend("PYTHONPATH", "${CORAL_libdir}")
