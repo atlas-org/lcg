@@ -38,13 +38,10 @@ def configure(ctx):
 
     ctx.hwaf_macro_append('LIB_CORAL', "lcg_CoralBase")
 
-    macro("CORAL_relacc_libs", (
-        {"default":["lcg_CoralKernel", "lcg_RelationalAccess"]},
-    ))
-
     ctx.hwaf_macro_append('LIB_CORAL', (
         {"default":                       "lcg_CoralBase"},
-        {"NEEDS_CORAL_RELATIONAL_ACCESS": ["lcg_CoralBase", "${CORAL_relacc_libs}"]},
+        {"NEEDS_CORAL_RELATIONAL_ACCESS": ["lcg_CoralBase",
+                                           "lcg_CoralKernel", "lcg_RelationalAccess"]},
         {"NEEDS_CORAL_BASE":              "lcg_CoralBase"},
     ))
     
