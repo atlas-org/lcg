@@ -140,7 +140,7 @@ def configure(ctx):
     macro("py_config_version",                "1.4.8")
     macro("py2neo_config_version",            "1.4.6")
     macro("pydot_config_version",             "1.0.28")
-    macro("pyanalysis_config_version",        "1.3")
+    macro("pyanalysis_config_version",        "1.4")
     macro("pygraphics_config_version",        "1.4")
     macro("pygsi_config_version",             "0.5")
     macro("pylint_config_version",            "0.26.0")
