@@ -17,8 +17,9 @@ def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
 
     macro = ctx.hwaf_declare_macro
-    
-    macro("CLHEP_native_version", "${CLHEP_config_version}")
+
+    config_version = ctx.hwaf_subst_vars("${CLHEP_config_version}").split("-")[0]
+    macro("CLHEP_native_version", config_version)
 
     macro("CLHEP_home", "${LCG_external}/clhep/${CLHEP_native_version}/${LCG_system}")
 
