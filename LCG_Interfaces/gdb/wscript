@@ -43,7 +43,26 @@ def configure(ctx):
     macro("gdb_libdir", "${gdb_home}/lib")
     macro("gdb_mandir", "${gdb_home}/share/man")
 
-    macro("LIB_gdb", "bfd")
+    macro("STLIB_gdb", "bfd")
+    ctx.hwaf_macro_prepend("STLIBPATH_gdb", (
+        {"target-x86_64": ["${gdb_libdir}", "${gdb_home}/lib64"]},
+        {"target-i686":   ["${gdb_libdir}"]},
+    ))
+
+    
+    macro("gdb_export_paths", (
+      {"default": ["${gdb_incdir}",
+                   "${gdb_bindir}",
+                   "${gdb_libdir}",
+                   "${gdb_mandir}",
+                   ]},
+      {"target-x86_64": ["${gdb_incdir}",
+                         "${gdb_bindir}",
+                         "${gdb_libdir}",
+                         "${gdb_home}/lib64",
+                         "${gdb_mandir}",
+                         ]},
+    ))
 
     ctx.lcg_declare_external_package(
         'gdb',
