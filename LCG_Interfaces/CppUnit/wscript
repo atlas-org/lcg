@@ -35,6 +35,7 @@ def configure(ctx):
     macro("CppUnit_incdir", "${CppUnit_home}/include")
     macro("CppUnit_libdir", "${CppUnit_home}/lib")
 
+    macro("INCLUDES_CppUnit", "${CppUnit_incdir}")
     macro("LIB_CppUnit", (
       {"default": ["cppunit", "dl"]},
       {"target-win": "cppunit_dll"},
