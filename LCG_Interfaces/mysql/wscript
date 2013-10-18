@@ -37,12 +37,11 @@ def configure(ctx):
     macro("mysql_mandir", "${mysql_home}/man")
     
     macro("LIB_mysql", (
-        {"default": "mysqlclient_r"},
+        {"default":    "mysqlclient_r"},
         {"target-win": "mysql"},
     ))
     
     ctx.hwaf_path_append("PATH", (
-      {"default": ""},
       {"target-win": "${mysql_libdir}"},
     ))
     
