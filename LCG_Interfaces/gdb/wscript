@@ -43,8 +43,8 @@ def configure(ctx):
     macro("gdb_libdir", "${gdb_home}/lib")
     macro("gdb_mandir", "${gdb_home}/share/man")
 
-    macro("STLIB_gdb", "bfd")
-    ctx.hwaf_macro_prepend("STLIBPATH_gdb", (
+    macro("STLIB_bfd", "bfd")
+    ctx.hwaf_macro_prepend("STLIBPATH_bfd", (
         {"target-x86_64": ["${gdb_libdir}", "${gdb_home}/lib64"]},
         {"target-i686":   ["${gdb_libdir}"]},
     ))
