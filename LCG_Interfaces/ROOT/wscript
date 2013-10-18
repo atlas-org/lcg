@@ -37,6 +37,10 @@ def configure(ctx):
     
     macro("ROOT_HOME", "${ROOT_home}")
     
+
+    macro("ROOT_export_paths", "${ROOTSYS}")
+    ctx.lcg_declare_external_package('ROOT', path='${ROOTSYS}')
+
     path = ctx.hwaf_subst_vars("${ROOTSYS}")
     binpath = ctx.hwaf_subst_vars("${ROOTSYS}/bin")
     ctx.find_root(path_list=[binpath], extra_paths=[path])
