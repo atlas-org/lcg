@@ -37,7 +37,7 @@ def configure(ctx):
 
     macro("COOL_config_version",  "COOL_2_8_19")
     macro("CORAL_config_version", "CORAL_2_3_28")
-    macro("RELAX_config_version", "RELAX_1_3_0o")
+    macro("RELAX_config_version", "RELAX_1_3_0m")
     macro("ROOT_config_version",  "5.34.10")
     
     ctx.hwaf_declare_tag("ROOT_GE_5_15", content=[])
