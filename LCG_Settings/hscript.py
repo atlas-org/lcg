@@ -65,7 +65,7 @@ def configure(ctx):
       {"target-gcc44": "4.4.3"},
       {"target-gcc45": "4.5.3"},
       {"target-gcc46": "4.6.2"},
-      {"target-gcc47": "4.7.1"},
+      {"target-gcc47": "4.7.2"},
       {"target-gcc48": "4.8.1"},
       {"target-gccmax": "max"},
       {"target-g11max": "g11"},
