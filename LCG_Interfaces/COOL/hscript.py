@@ -41,7 +41,10 @@ def configure(ctx):
     macro("COOL_home", "${COOL_base}/${LCG_platform}")
 
     macro("COOL_bindir", "${COOL_home}/bin")
-    macro("COOL_incdir", "${COOL_base}/include")
+    macro("COOL_incdir", (
+        {"default":    "${COOL_base}/include"},
+        {"ATLAS-pack": "${COOL_home}/include"},
+    ))        
     macro("COOL_libdir", "${COOL_home}/lib")
     macro("COOL_pydir",  "${COOL_home}/python")
 
@@ -53,22 +56,26 @@ def configure(ctx):
         {"NEEDS_COOL_FACTORY": ["lcg_CoolKernel", "lcg_CoolApplication"]},
     ))
     
-    macro("COOL_export_paths", (
-      {"default": ["${COOL_home}/bin", "${COOL_home}/lib", "${COOL_home}/tests", "${COOL_base}/include", "${COOL_home}/python"]},
+    macro("LIB_COOL-Factory", (
+        {"default": ["lcg_CoolKernel", "lcg_CoolApplication"]},
     ))
-
-    ctx.hwaf_path_prepend("PYTHONPATH", (
-      {"default": ""},
-      {("NEEDS_PYCOOL", "target-win"): "${COOL_home}\\python"},
-      {"NEEDS_PYCOOL": "${COOL_home}/python"},
+    
+    macro("COOL_export_paths", (
+      {"default": ["${COOL_bindir}",
+                   "${COOL_libdir}",
+                   "${COOL_incdir}",
+                   "${COOL_pydir}",
+                   "${COOL_home}/tests",
+                   ]},
     ))
 
     ctx.lcg_declare_external_package(
         'COOL',
         path='${COOL_home}',
+        binpath='${COOL_bindir}',
         incpath='${COOL_incdir}',
         libpath='${COOL_libdir}',
-        binpath='${COOL_bindir}',
+        pypath= '${COOL_pydir}',
         )
     
     return # configure

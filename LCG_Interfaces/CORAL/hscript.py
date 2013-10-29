@@ -32,7 +32,10 @@ def configure(ctx):
     macro("CORAL_home", "${CORAL_base}/${LCG_platform}")
 
     macro("CORAL_bindir", "${CORAL_home}/bin")
-    macro("CORAL_incdir", "${CORAL_base}/include")
+    macro("CORAL_incdir", (
+        {"default":    "${CORAL_base}/include"},
+        {"ATLAS-pack": "${CORAL_home}/include"},
+    ))
     macro("CORAL_libdir", "${CORAL_home}/lib")
     macro("CORAL_pydir",  "${CORAL_home}/python")
 
