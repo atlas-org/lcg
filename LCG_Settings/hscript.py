@@ -34,9 +34,9 @@ def configure(ctx):
     ctx.hwaf_export_module("waftools/lcg-policy.py")
 
     macro("SITEROOT", (
-        {"default": "/opt"},
-        {("afs", "cern"): "/afs/cern.ch"},
-        {("cvmfs", "cern"): "/cvmfs/cern.ch"},
+        {"default":         "/opt"},
+        {("afs",   "CERN"): "/afs/cern.ch"},
+        {("cvmfs", "CERN"): "/cvmfs/cern.ch"},
     ))
     ctx.hwaf_declare_runtime_env("SITEROOT")
     
