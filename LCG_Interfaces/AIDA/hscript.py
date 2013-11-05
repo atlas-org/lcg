@@ -24,6 +24,13 @@ def configure(ctx):
     
     macro("INCLUDES_AIDA", "${AIDA_incdir}")
     
+    macro("AIDA_export_paths", "${AIDA_home}")
+    ctx.lcg_declare_external_package(
+        'AIDA',
+        path='${AIDA_home}',
+        incpath='${AIDA_incdir}',
+        )
+
     return
 
 def build(ctx):
