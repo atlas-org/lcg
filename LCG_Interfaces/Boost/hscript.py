@@ -67,6 +67,11 @@ def configure(ctx):
         incpath=incdir,
         libpath=libdir,
     )
+
+    ## define a minimal Boost-uselib
+    macro("INCLUDES_Boost", "${Boost_incdir}")
+    macro( "LIBPATH_Boost", "${Boost_libdir}")
+    ##
     
     ctx.load('find_boost')
     path = ctx.hwaf_subst_vars("${Boost_home}")
