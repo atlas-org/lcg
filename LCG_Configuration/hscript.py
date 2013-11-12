@@ -32,7 +32,7 @@ def configure(ctx):
     macro = ctx.hwaf_declare_macro
     
     ## projects.
-    macro("LCG_config_version", "66")
+    macro("LCG_config_version", "65")
     ctx.msg("LCG", ctx.env["LCG_config_version"])
 
     macro("COOL_config_version",  "COOL_2_8_18")
