@@ -21,6 +21,7 @@ PACKAGE = {
 }
 
 def pkg_deps(ctx):
+    ctx.use_pkg("LCG_Platforms")
     return
 
 ### ---------------------------------------------------------------------------
