@@ -19,11 +19,19 @@ def pkg_deps(ctx):
     ctx.use_pkg("LCG_Interfaces/gfal")
     return
 
+def options(ctx):
+    ctx.load("find_root")
+    
 def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
     ctx.load('find_root')
     ctx.load('find_xrootd')
     ctx.load('find_gccxml')
+
+    if ctx.hwaf_enabled_tag("STANDALONE"):
+        ctx.load('find_root')
+        ctx.find_root()
+        return
 
     macro = ctx.hwaf_declare_macro
     
