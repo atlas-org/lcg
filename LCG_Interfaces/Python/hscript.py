@@ -1,6 +1,8 @@
 # -*- python -*-
 # automatically generated wscript
 
+import os.path as osp
+
 import waflib.Logs as msg
 
 PACKAGE = {
@@ -22,6 +24,15 @@ def configure(ctx):
     if ctx.hwaf_enabled_tag("STANDALONE"):
         ctx.load('find_python')
         ctx.find_python()
+
+        py_home = osp.dirname(ctx.hwaf_subst_vars("${LIBPATH_PYEMBED}"))
+        ctx.lcg_declare_external_package(
+            'python',
+            path=py_home,
+            libpath='${LIBPATH_PYEMBED}',
+            libname='${LIB_PYEMBED}',
+            incpath='${INCLUDES_PYEMBED}',
+            )
         return
     
     macro = ctx.hwaf_declare_macro
