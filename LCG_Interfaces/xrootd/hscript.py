@@ -20,7 +20,7 @@ def configure(ctx):
 
     if ctx.hwaf_enabled_tag("STANDALONE"):
         ctx.load('find_xrootd')
-        ctx.find_xrootd()
+        ctx.find_xrootd(mandatory=False)
         return
 
     macro = ctx.hwaf_declare_macro
