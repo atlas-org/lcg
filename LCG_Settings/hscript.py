@@ -35,7 +35,7 @@ def configure(ctx):
     ctx.hwaf_export_module("waftools/lcg-policy.py")
 
     macro("SITEROOT", (
-        {"default":         "/opt"},
+        {"default":         os.getenv("SITEROOT", "/opt")},
         {("afs",   "CERN"): "/afs/cern.ch"},
         {("cvmfs", "CERN"): "/cvmfs/cern.ch"},
     ))
@@ -59,6 +59,13 @@ def configure(ctx):
 
     # ==== Compiler Names and environment setup ====
 
+    if ctx.hwaf_enabled_tag("STANDALONE"):
+        ctx.find_toolchain(override=True, mandatory=True)
+        ctx.msg("LCG C compiler", ctx.env['CC'])
+        ctx.msg("LCG CXX compiler", ctx.env['CXX'])
+        ctx.msg("LCG Fortran compiler", ctx.env['FC'])
+        return
+    
     # gcc
     macro("gcc_config_version", (
       {"default": ""},
