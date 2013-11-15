@@ -16,11 +16,16 @@ def pkg_deps(ctx):
 
 ### ---------------------------------------------------------------------------
 def options(ctx):
-    
+    ctx.load("find_boost")
     return # options
 
 def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
+
+    if ctx.hwaf_enabled_tag("STANDALONE"):
+        ctx.load('find_boost')
+        ctx.find_boost(lib="system")
+        return
 
     macro = ctx.hwaf_declare_macro
     
