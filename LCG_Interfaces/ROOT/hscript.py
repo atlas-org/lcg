@@ -14,9 +14,11 @@ def pkg_deps(ctx):
     ctx.use_pkg("LCG_Interfaces/GCCXML")
     ctx.use_pkg("LCG_Interfaces/Python")
     ctx.use_pkg("LCG_Interfaces/xrootd")
-    ctx.use_pkg("LCG_Interfaces/Qt")
-    ctx.use_pkg("LCG_Interfaces/dcache_client")
-    ctx.use_pkg("LCG_Interfaces/gfal")
+    if not ctx.hwaf_enabled_tag("xaod-standalone"):
+        ctx.use_pkg("LCG_Interfaces/Qt")
+        ctx.use_pkg("LCG_Interfaces/dcache_client")
+        ctx.use_pkg("LCG_Interfaces/gfal")
+        pass
     return
 
 def options(ctx):
