@@ -12,8 +12,16 @@ def pkg_deps(ctx):
     ctx.use_pkg("LCG_Settings")
     return
 
+def options(ctx):
+    ctx.load("find_gccxml")
+    
 def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
+
+    if ctx.hwaf_enabled_tag("STANDALONE"):
+        ctx.load('find_gccxml')
+        ctx.find_gccxml()
+        return
 
     macro = ctx.hwaf_declare_macro
     
@@ -24,7 +32,7 @@ def configure(ctx):
     macro("GCCXML_name", "gccxml")
 
     ctx.hwaf_path_prepend('PATH', "${GCCXML_home}/bin")
-    
+
     ctx.lcg_declare_external_package(
         "gccxml",
         path="${GCCXML_home}",
