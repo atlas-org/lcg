@@ -12,8 +12,16 @@ def pkg_deps(ctx):
     ctx.use_pkg("LCG_Settings")
     return
 
+def options(ctx):
+    ctx.load("find_xrootd")
+    
 def configure(ctx):
     msg.debug('[configure] package name: '+PACKAGE['name'])
+
+    if ctx.hwaf_enabled_tag("STANDALONE"):
+        ctx.load('find_xrootd')
+        ctx.find_xrootd()
+        return
 
     macro = ctx.hwaf_declare_macro
     
