@@ -43,7 +43,11 @@ def configure(ctx):
       {"target-vc9": "vc90"},
     ))
 
-    macro("Boost_incdir", "${Boost_home}/include/boost-${Boost_file_version}")
+    macro("Boost_incdir", (
+      {"default":      "${Boost_home}/include/boost-${Boost_file_version}"},
+      {"ATLAS-docker": "${Boost_home}/include"},
+    ))
+
     macro("Boost_libdir", "${Boost_home}/lib")
 
     ctx.hwaf_macro_append("CPPFLAGS_boost", (
