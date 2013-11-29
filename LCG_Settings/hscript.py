@@ -86,7 +86,8 @@ def configure(ctx):
     ))
 
     macro("gcc_home", (
-      {"default": "${LCG_external}/gcc/${gcc_native_version}/${LCG_hostos}"},
+      {"default":    "${LCG_external}/gcc/${gcc_native_version}/${LCG_hostos}"},
+      {"ATLAS-pack": "${LCG_external}/gcc/${gcc_native_version}/${LCG_system}"},
     ))
 
     # clang
@@ -351,9 +352,11 @@ def configure(ctx):
 
     ctx.hwaf_path_prepend("LD_LIBRARY_PATH", (
       {"default": ""},
-      {"target-lcg-compiler": "${gcc_home}/${unixdirname}"},
-      {"target-clang": "${gcc_home}/${unixdirname}"},
-      {"target-icc": "${gcc_home}/${unixdirname}"},
+      {("target-lcg-compiler",
+        "ATLAS-pack"):          "${gcc_home}/lib:${gcc_home}/lib64"},
+      {"target-lcg-compiler":   "${gcc_home}/${unixdirname}"},
+      {"target-clang":          "${gcc_home}/${unixdirname}"},
+      {"target-icc":            "${gcc_home}/${unixdirname}"},
     ))
 
     #code coverage - lcov tool

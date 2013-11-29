@@ -31,8 +31,9 @@ def configure(ctx):
     macro("cmake_native_version", "${cmake_config_version}")
 
     macro("cmake_platform", (
-      {"default": "Linux-i386"},
+      {"default":    "Linux-i386"},
       {"target-mac": "Darwin"},
+      {"ATLAS-pack": "${LCG_system}"},
     ))
 
     macro("cmake_home", "${LCG_external}/CMake/${cmake_native_version}/${cmake_platform}")

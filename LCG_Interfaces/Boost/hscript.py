@@ -29,7 +29,10 @@ def configure(ctx):
 
     macro = ctx.hwaf_declare_macro
     
-    macro("Boost_native_version", "${Boost_config_version}_python${Python_config_version_twodigit}")
+    macro("Boost_native_version", (
+        {"default":    "${Boost_config_version}_python${Python_config_version_twodigit}"},
+        {"ATLAS-pack": "${Boost_config_version}"},
+    ))
     macro("Boost_home", "${LCG_external}/Boost/${Boost_native_version}/${LCG_system}")
 
     macro("Boost_compiler_version", (
@@ -43,7 +46,11 @@ def configure(ctx):
       {"target-vc9": "vc90"},
     ))
 
-    macro("Boost_incdir", "${Boost_home}/include/boost-${Boost_file_version}")
+    macro("Boost_incdir", (
+      {"default":      "${Boost_home}/include/boost-${Boost_file_version}"},
+      {"ATLAS-pack": "${Boost_home}/include"},
+    ))
+
     macro("Boost_libdir", "${Boost_home}/lib")
 
     ctx.hwaf_macro_append("CPPFLAGS_boost", (
