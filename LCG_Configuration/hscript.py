@@ -69,7 +69,10 @@ def configure(ctx):
     macro("cmt_config_version",               "v1r20p20081118")
     macro("coin3d_config_version",            "3.1.3p2")
     macro("coverage_config_version",          "3.5.2")
-    macro("CppUnit_config_version",           "1.12.1_p1")
+    macro("CppUnit_config_version", (
+        {"default":                           "1.12.1_p1"},
+        {"ATLAS-pack":                        "1.12.1"},
+    ))
     macro("cx_oracle_config_version",         "5.1.1")
     macro("david_config_version",             "1_36a")
     macro("dawn_config_version",              "3_88a")

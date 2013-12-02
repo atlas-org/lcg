@@ -30,7 +30,10 @@ def configure(ctx):
     
     macro = ctx.hwaf_declare_macro
     
-    macro("QMtest_native_version", "${QMtest_config_version}_python${Python_config_version_twodigit}")
+    macro("QMtest_native_version", (
+        {"default":    "${QMtest_config_version}_python${Python_config_version_twodigit}"},
+        {"ATLAS-pack": "${QMtest_config_version}"},
+    ))
     
     macro("QMtest_home", "${LCG_external}/QMtest/${QMtest_native_version}/${LCG_system}")
     macro("QM_home", "${QMtest_home}")
