@@ -19,7 +19,10 @@ def configure(ctx):
     macro = ctx.hwaf_declare_macro
     
     macro("AIDA_native_version", "${AIDA_config_version}")
-    macro("AIDA_home", "${LCG_external}/AIDA/${AIDA_native_version}/share")
+    macro("AIDA_home", (
+        {"default":    "${LCG_external}/AIDA/${AIDA_native_version}/share"},
+        {"ATLAS-pack": "${LCG_external}/AIDA/${AIDA_native_version}/${LCG_system}/share"},
+    ))
     macro("AIDA_incdir", "${AIDA_home}/src/cpp")
     
     macro("INCLUDES_AIDA", "${AIDA_incdir}")
