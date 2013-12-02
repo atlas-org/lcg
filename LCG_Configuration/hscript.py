@@ -62,6 +62,7 @@ def configure(ctx):
     macro("cgsigsoap_config_version",         "1.3.3-1")
     macro("CLHEP_config_version",             (
         {"default":                           "1.9.4.7"},
+        {("ATLAS","ATLAS-pack"):              "2.1.2.3"},
         {"ATLAS":                             "2.1.2.3-atl01"},
     ))
     macro("cmake_config_version",             "2.8.9")
