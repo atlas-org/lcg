@@ -41,6 +41,7 @@ def configure(ctx):
       {"target-win": ""},
     ))
 
+    macro("libtool_export_paths", "${libtool_home}")
     ctx.lcg_declare_external_package(
         'libtool',
         path='${libtool_home}',
