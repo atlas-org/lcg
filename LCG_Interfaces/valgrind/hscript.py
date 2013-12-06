@@ -36,6 +36,7 @@ def configure(ctx):
     macro("valgrind_incdir", "${valgrind_home}/include")
     macro("valgrind_libdir", "${valgrind_home}/lib/valgrind")
     
+    macro("valgrind_export_paths", "${valgrind_home}")
     ctx.lcg_declare_external_package(
         'valgrind',
         path='${valgrind_home}',

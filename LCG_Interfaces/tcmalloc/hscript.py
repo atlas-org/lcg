@@ -41,6 +41,7 @@ def configure(ctx):
     macro("tcmalloc_libdir", "${tcmalloc_home}/lib")
     macro("tcmalloc_mandir", "${tcmalloc_home}/share/man")
 
+    macro("tcmalloc_export_paths", "${tcmalloc_home}")
     ctx.lcg_declare_external_package(
         'tcmalloc',
         path='${tcmalloc_home}',

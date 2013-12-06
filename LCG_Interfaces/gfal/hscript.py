@@ -59,6 +59,7 @@ def configure(ctx):
       {"target-win": ""},
     ))
 
+    macro("gfal_export_paths", "${gfal_home}")
     ctx.lcg_declare_external_package(
         "gfal",
         path='${gfal_home}',

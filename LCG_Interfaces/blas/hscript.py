@@ -38,6 +38,7 @@ def configure(ctx):
 
     macro("LIB_blas", "blas")
 
+    macro("blas_export_paths", "${blas_home}")
     ctx.lcg_declare_external_package(
         'blas',
         path='${blas_home}',

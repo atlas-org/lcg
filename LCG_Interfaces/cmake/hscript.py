@@ -43,6 +43,7 @@ def configure(ctx):
     path = ctx.hwaf_subst_vars('${cmake_home}')
     binpath = ctx.hwaf_subst_vars('${cmake_bindir}')
     
+    macro("cmake_export_paths", "${cmake_home}")
     ctx.lcg_declare_external_package(
         'cmake',
         path=path,

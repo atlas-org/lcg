@@ -31,8 +31,10 @@ def configure(ctx):
 
     macro("GCCXML_name", "gccxml")
 
+
     ctx.hwaf_path_prepend('PATH', "${GCCXML_home}/bin")
 
+    macro("GCCXML_export_paths", "${GCCXML_home}")
     ctx.lcg_declare_external_package(
         "gccxml",
         path="${GCCXML_home}",

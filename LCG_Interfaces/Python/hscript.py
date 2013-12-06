@@ -110,6 +110,7 @@ def configure(ctx):
         extra_paths=[path],
         )
     
+    macro("Python_export_paths", "${Python_home}")
     ctx.lcg_declare_external_package(
         'python',
         path='${Python_home}',

@@ -44,6 +44,7 @@ def configure(ctx):
       {"target-win": "lapack3"},
     ))
 
+    macro("lapack_export_paths", "${lapack_home}")
     ctx.lcg_declare_external_package(
         'lapack',
         path='${lapack_home}',
