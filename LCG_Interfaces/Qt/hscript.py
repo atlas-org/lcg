@@ -31,6 +31,7 @@ def configure(ctx):
     macro("Qt_native_version", "${qt_config_version}")
     macro("Qt_home", "${LCG_external}/qt/${Qt_native_version}/${LCG_system}")
 
+    macro("Qt_export_paths", "${Qt_home}")
     macro("Qt_bindir", "${Qt_home}/bin")
     macro("Qt_incdir", "${Qt_home}/include")
     macro("Qt_libdir", "${Qt_home}/lib")
